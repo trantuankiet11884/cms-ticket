@@ -1,24 +1,35 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import Layout, { Content } from "antd/es/layout/layout";
+import Header from "./components/Header";
+import Sidebar from "./components/Sidebar";
+import { Route, Routes } from "react-router-dom";
+import Dashboard from "./pages/Dashboard";
+import ManageTicket from "./pages/ManageTicket";
+import ComparisonTicket from "./pages/ComparisonTicket";
+import PackageService from "./pages/PackageService";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+      <Layout className="layout">
+        <Sidebar></Sidebar>
+        <Layout>
+          <Header></Header>
+          <Content>
+            <Routes>
+              <Route path="/" element={<Dashboard />}></Route>
+              <Route path="/manage-ticket" element={<ManageTicket />}></Route>
+              <Route
+                path="/comparison-ticket"
+                element={<ComparisonTicket />}
+              ></Route>
+              <Route
+                path="/package-service"
+                element={<PackageService />}
+              ></Route>
+            </Routes>
+          </Content>
+        </Layout>
+      </Layout>
     </div>
   );
 }
