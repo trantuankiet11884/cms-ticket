@@ -16,6 +16,7 @@ import { RootState } from "../redux/store";
 import { fetchComparisionTicket } from "../redux/comparisonTicket";
 
 interface ComparisionTicket {
+  id: string;
   stt: string;
   codeTicket: string;
   dou: string;
@@ -54,22 +55,19 @@ const columns: ColumnsType<ComparisionTicket> = [
     title: "",
     dataIndex: "isComparision",
     key: "isComparision",
-    render: (record: ComparisionTicket) => (
-      <span>
-        {record.isComparision ? (
-          <span>Đã đối soát</span>
-        ) : (
-          <span>Chưa đối soát</span>
-        )}
-      </span>
-    ),
+    render: (isComparision: boolean) =>
+      isComparision ? <span>Đã đối soát</span> : <span>Chưa đối soát</span>,
   },
 ];
 
 const ComparisonTicket = () => {
-  const [value, setValue] = useState(1);
-  const onChange = (e: RadioChangeEvent) => {
+  const [value, setValue] = useState("");
+  const [isComparision, setIsComparision] = useState<string>("");
+  const [filteredData, setFilteredData] = useState<ComparisionTicket[]>([]);
+
+  const onChange = (e: RadioChangeEvent, value: string) => {
     setValue(e.target.value);
+    setIsComparision(e.target.value);
   };
 
   const dispatch: any = useDispatch();
@@ -80,6 +78,21 @@ const ComparisonTicket = () => {
   useEffect(() => {
     dispatch(fetchComparisionTicket());
   }, [dispatch]);
+
+  useEffect(() => {
+    setFilteredData(dataCpTicket);
+  }, [dataCpTicket]);
+
+  const handleFilterd = () => {
+    let filteredData = dataCpTicket;
+    if (isComparision !== "" && isComparision !== "all") {
+      filteredData = filteredData.filter(
+        (item) => item.isComparision === (isComparision === "true")
+      );
+    }
+
+    setFilteredData(filteredData);
+  };
   return (
     <div className="h-full">
       <Row className="h-full">
@@ -98,7 +111,11 @@ const ComparisonTicket = () => {
                 </div>
               </div>
               <div className="pt-4">
-                <Table columns={columns} dataSource={dataCpTicket}></Table>
+                <Table
+                  columns={columns}
+                  dataSource={filteredData}
+                  rowKey={(record: ComparisionTicket) => record.id}
+                ></Table>
               </div>
             </div>
           </div>
@@ -113,10 +130,14 @@ const ComparisonTicket = () => {
                     <p>Tình trạng đối soát</p>
                   </Col>
                   <Col span={12}>
-                    <Radio.Group className="" onChange={onChange} value={value}>
-                      <Radio value={1}>Tất cả</Radio>
-                      <Radio value={2}>Đã đối soát</Radio>
-                      <Radio value={3}>Chưa đối soát</Radio>
+                    <Radio.Group
+                      onChange={(e: RadioChangeEvent) => onChange(e, value)}
+                      value={value}
+                      defaultValue={"all"}
+                    >
+                      <Radio value={"all"}>Tất cả</Radio>
+                      <Radio value={"true"}>Đã đối soát</Radio>
+                      <Radio value={"false"}>Chưa đối soát</Radio>
                     </Radio.Group>
                   </Col>
                 </Row>
@@ -146,7 +167,9 @@ const ComparisonTicket = () => {
                 </Row>
               </div>
               <div className="text-center pt-4">
-                <Button danger>Lọc</Button>
+                <Button danger onClick={handleFilterd}>
+                  Lọc
+                </Button>
               </div>
             </div>
           </div>

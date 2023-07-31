@@ -1,4 +1,5 @@
 import {
+  Badge,
   Button,
   Checkbox,
   DatePicker,
@@ -7,6 +8,7 @@ import {
   RadioChangeEvent,
   Space,
   Table,
+  Tag,
 } from "antd";
 import Search from "antd/es/input/Search";
 import { ColumnsType } from "antd/es/table";
@@ -49,6 +51,37 @@ const ManageTicket = () => {
       title: "Tình trạng sử dụng",
       dataIndex: "status",
       key: "status",
+      render: (text: string, record: DataType) => {
+        switch (record.status) {
+          case "Đã sử dụng":
+            return (
+              <Tag color="#EAF1F8">
+                <Space>
+                  <Badge status="default"></Badge>
+                  <span className="used">Đã sử dụng</span>
+                </Space>
+              </Tag>
+            );
+          case "Chưa sử dụng":
+            return (
+              <Tag color="#DEF7E0">
+                <Space>
+                  <Badge status="success"></Badge>
+                  <span className="unused">Chưa sử dụng</span>
+                </Space>
+              </Tag>
+            );
+          default:
+            return (
+              <Tag color="#F8EBE8">
+                <Space>
+                  <Badge status="error"></Badge>
+                  <span className="expiry">Hết hạn</span>
+                </Space>
+              </Tag>
+            );
+        }
+      },
     },
     {
       title: "Ngày sử dụng",

@@ -150,7 +150,7 @@ const PackageService = () => {
               <Checkbox></Checkbox>&nbsp;&nbsp;
               <span>
                 <Space>
-                  Vé lẻ {"(vnđ/vé)"} với giá{" "}
+                  Vé lẻ {"(vnđ/vé)"} với giá
                   <Input className="w-24" placeholder="Giá vé"></Input>
                   {"/vé"}
                 </Space>

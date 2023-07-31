@@ -225,3 +225,15 @@ body {
   font-weight: 700;
   line-height: 1.625rem; /* 144.444% */
 }
+
+.used {
+  color: #919dba;
+}
+
+.unused {
+  color: #03ac00;
+}
+
+.expiry {
+  color: #fd5959;
+}
