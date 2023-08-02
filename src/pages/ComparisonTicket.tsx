@@ -1,3 +1,7 @@
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../redux/store";
+import { fetchComparisionTicket } from "../redux/comparisonTicket";
 import {
   Button,
   Col,
@@ -5,21 +9,19 @@ import {
   Radio,
   RadioChangeEvent,
   Row,
-  Space,
   Table,
 } from "antd";
 import Search from "antd/es/input/Search";
 import { ColumnsType } from "antd/es/table";
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../redux/store";
-import { fetchComparisionTicket } from "../redux/comparisonTicket";
+import moment from "moment";
+import firebase from "firebase/compat/app";
+import "firebase/compat/firestore";
+import { Dayjs } from "dayjs";
 
 interface ComparisionTicket {
   id: string;
-  stt: string;
   codeTicket: string;
-  dou: string;
+  dou: firebase.firestore.Timestamp;
   name: string;
   gate: string;
   isComparision: boolean;
@@ -40,6 +42,11 @@ const columns: ColumnsType<ComparisionTicket> = [
     title: "Ngày sử dụng",
     dataIndex: "dou",
     key: "dou",
+    render: (text: any, record: ComparisionTicket) => {
+      const douTimestamp = record.dou as firebase.firestore.Timestamp;
+      const douDate = moment(douTimestamp.toMillis()).format("DD/MM/YYYY");
+      return <span>{douDate}</span>;
+    },
   },
   {
     title: "Tên loại vé",
@@ -56,19 +63,20 @@ const columns: ColumnsType<ComparisionTicket> = [
     dataIndex: "isComparision",
     key: "isComparision",
     render: (isComparision: boolean) =>
-      isComparision ? <span>Đã đối soát</span> : <span>Chưa đối soát</span>,
+      isComparision ? (
+        <span className="comparision">Đã đối soát</span>
+      ) : (
+        <span className="iscomparision">Chưa đối soát</span>
+      ),
   },
 ];
 
 const ComparisonTicket = () => {
-  const [value, setValue] = useState("");
+  const [searchValue, setSearchValue] = useState("");
   const [isComparision, setIsComparision] = useState<string>("");
   const [filteredData, setFilteredData] = useState<ComparisionTicket[]>([]);
-
-  const onChange = (e: RadioChangeEvent, value: string) => {
-    setValue(e.target.value);
-    setIsComparision(e.target.value);
-  };
+  const [fromDate, setFromDate] = useState<Dayjs | null>(null);
+  const [toDate, setToDate] = useState<Dayjs | null>(null);
 
   const dispatch: any = useDispatch();
   const dataCpTicket = useSelector(
@@ -83,8 +91,30 @@ const ComparisonTicket = () => {
     setFilteredData(dataCpTicket);
   }, [dataCpTicket]);
 
-  const handleFilterd = () => {
+  const onRadioChange = (e: RadioChangeEvent, value: string) => {
+    setSearchValue(e.target.value);
+    setIsComparision(e.target.value);
+  };
+
+  const onChangeFromDate = (date: Dayjs | null, dateString: string) => {
+    setFromDate(date);
+  };
+
+  const onChangeToDate = (date: Dayjs | null, dateString: string) => {
+    setToDate(date);
+  };
+
+  const handleFilterData = () => {
     let filteredData = dataCpTicket;
+
+    if (fromDate && toDate) {
+      filteredData = filteredData.filter(
+        (item) =>
+          item.dou.toMillis() >= fromDate.startOf("day").valueOf() &&
+          item.dou.toMillis() <= toDate.endOf("day").valueOf()
+      );
+    }
+
     if (isComparision !== "" && isComparision !== "all") {
       filteredData = filteredData.filter(
         (item) => item.isComparision === (isComparision === "true")
@@ -93,16 +123,20 @@ const ComparisonTicket = () => {
 
     setFilteredData(filteredData);
   };
+
   return (
     <div className="h-full">
       <Row className="h-full">
         <Col span={17}>
           <div className="p-4 pt-0 h-full">
             <div className="bg-white h-full p-2 rounded-lg">
-              <p className="title ">Đối soát vé</p>
+              <p className="title">Đối soát vé</p>
               <div className="flex justify-between pt-4">
                 <div>
-                  <Search placeholder="Search"></Search>
+                  <Search
+                    placeholder="Search"
+                    onChange={(e) => setSearchValue(e.target.value)}
+                  />
                 </div>
                 <div>
                   <button className="comparison">
@@ -112,14 +146,17 @@ const ComparisonTicket = () => {
               </div>
               <div className="pt-4">
                 <Table
+                  size="small"
                   columns={columns}
                   dataSource={filteredData}
                   rowKey={(record: ComparisionTicket) => record.id}
+                  className="table-striped-rows"
                 ></Table>
               </div>
             </div>
           </div>
         </Col>
+
         <Col span={7}>
           <div className="p-4 pt-0 h-full">
             <div className="bg-white h-full p-2 rounded-lg">
@@ -131,11 +168,15 @@ const ComparisonTicket = () => {
                   </Col>
                   <Col span={12}>
                     <Radio.Group
-                      onChange={(e: RadioChangeEvent) => onChange(e, value)}
-                      value={value}
+                      onChange={(e: RadioChangeEvent) =>
+                        onRadioChange(e, searchValue)
+                      }
+                      value={searchValue}
                       defaultValue={"all"}
                     >
-                      <Radio value={"all"}>Tất cả</Radio>
+                      <Radio value={"all"} checked={true}>
+                        Tất cả
+                      </Radio>
                       <Radio value={"true"}>Đã đối soát</Radio>
                       <Radio value={"false"}>Chưa đối soát</Radio>
                     </Radio.Group>
@@ -156,18 +197,24 @@ const ComparisonTicket = () => {
                 <Row>
                   <Col span={12}>Từ ngày</Col>
                   <Col span={12}>
-                    <DatePicker></DatePicker>
+                    <DatePicker
+                      value={fromDate}
+                      onChange={onChangeFromDate}
+                    ></DatePicker>
                   </Col>
                 </Row>
                 <Row className="py-3">
                   <Col span={12}>Đến ngày</Col>
                   <Col span={12}>
-                    <DatePicker></DatePicker>
+                    <DatePicker
+                      value={toDate}
+                      onChange={onChangeToDate}
+                    ></DatePicker>
                   </Col>
                 </Row>
               </div>
               <div className="text-center pt-4">
-                <Button danger onClick={handleFilterd}>
+                <Button danger onClick={handleFilterData}>
                   Lọc
                 </Button>
               </div>

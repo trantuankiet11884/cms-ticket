@@ -2,6 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Playfair+Display:ital,wght@0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+.dotdot {
+  color: var(--text, #1e0d03);
+  font-feature-settings: "clig" off, "liga" off;
+
+  /* 14 medium */
+  font-family: Montserrat;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1.375rem; /* 157.143% */
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -23,6 +37,46 @@ body {
 /* .ant-table-cell {
   white-space: nowrap;
 } */
+
+:where(.css-dev-only-do-not-override-txh9fw).ant-pagination
+  .ant-pagination-item-active
+  a {
+  color: #ff993c;
+}
+
+:where(.css-dev-only-do-not-override-txh9fw).ant-pagination
+  .ant-pagination-item-active:hover {
+  border-color: #ff993c;
+}
+
+:where(.css-dev-only-do-not-override-txh9fw).ant-pagination
+  .ant-pagination-item-active {
+  font-weight: 600;
+  background-color: #ffffff;
+  border-color: #ff993c;
+}
+
+:where(.css-dev-only-do-not-override-txh9fw).ant-pagination
+  .ant-pagination-item-active:hover
+  a {
+  color: #ff993c;
+}
+
+:where(.css-dev-only-do-not-override-txh9fw).ant-table-wrapper
+  .ant-table-pagination-right {
+  justify-content: center;
+}
+
+:where(
+    .css-dev-only-do-not-override-txh9fw
+  ).ant-btn-default.ant-btn-background-ghost:not(:disabled):not(
+    .ant-btn-disabled
+  )::selection {
+  background-color: #fff;
+  color: #ff993c;
+  border-bottom: 2px solid #ff993c;
+  border-radius: none;
+}
 
 :where(.css-dev-only-do-not-override-txh9fw).ant-layout {
   display: flex;
@@ -101,7 +155,7 @@ body {
 
   /* 14 regular */
   font-family: Montserrat;
-  font-size: 0.875rem;
+  font-size: 0.65rem;
   font-style: normal;
   font-weight: 400;
   line-height: 1.375rem; /* 157.143% */
@@ -237,3 +291,49 @@ body {
 .expiry {
   color: #fd5959;
 }
+
+.iscomparision {
+  color: var(--grey-4, #a5a8b1);
+  font-feature-settings: "clig" off, "liga" off;
+
+  /* 14 italic medium */
+  font-family: Montserrat;
+  font-size: 0.875rem;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.375rem; /* 157.143% */
+}
+
+.comparision {
+  color: var(--end, #fd5959);
+  font-feature-settings: "clig" off, "liga" off;
+
+  /* 14 italic medium */
+  font-family: Montserrat;
+  font-size: 0.875rem;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.375rem; /* 157.143% */
+}
+
+.add-title {
+  color: var(--text, #1e0d03);
+
+  /* 24 bold */
+  font-family: Montserrat;
+  font-size: 1.5rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.875rem; /* 125% */
+}
+
+.table-striped-rows tr:nth-child(2n) td {
+  background-color: #f7f8fb;
+}
+.table-striped-rows thead {
+  background-color: #f7f8fb;
+}
+
+/* .ant-table-cell {
+  white-space: nowrap;
+} */

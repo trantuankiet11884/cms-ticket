@@ -1,10 +1,6 @@
 import Search from "antd/es/input/Search";
 import { bell, mail, test } from "../assets/js";
 
-// interface Props {
-//   onSearch: any;
-// }
-
 const Header = () => {
   return (
     <div className="flex justify-between items-center p-4 w-full">

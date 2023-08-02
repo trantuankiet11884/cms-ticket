@@ -8,7 +8,7 @@ import {
 import { Menu } from "antd";
 import Sider from "antd/es/layout/Sider";
 import { logo } from "../assets/js";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 type MenuItem = {
   key: string;
@@ -63,7 +63,9 @@ const Sidebar: React.FC = () => {
     <>
       <Sider className="h-full ">
         <div className=" p-4 pb-14">
-          <img src={logo} alt="logo" className="logo" />
+          <Link to="/">
+            <img src={logo} alt="logo" className="logo" />
+          </Link>
         </div>
         <Menu
           defaultSelectedKeys={["1"]}

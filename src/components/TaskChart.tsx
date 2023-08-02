@@ -13,13 +13,41 @@ const TasksChart: React.FC = () => {
     },
   ];
 
+  const series2 = [17, 15];
+
+  let options2 = {
+    chart: {},
+    color: ["#fff"],
+  };
+
+  const series3 = [44, 55];
+
+  let options3 = {
+    chart: {},
+  };
   return (
-    <ReactApexChart
-      type="area"
-      options={options}
-      series={series}
-      height={350}
-    />
+    <>
+      <ReactApexChart
+        type="area"
+        options={options}
+        series={series}
+        height={300}
+      />
+      <div className="flex">
+        <ReactApexChart
+          type="donut"
+          options={options2}
+          series={series2}
+          height={130}
+        />
+        <ReactApexChart
+          type="donut"
+          options={options3}
+          series={series3}
+          height={130}
+        />
+      </div>
+    </>
   );
 };
 

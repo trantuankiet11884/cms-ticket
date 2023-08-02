@@ -1,11 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { firestore } from "../../firebase/config";
+import firebase from "firebase/compat/app";
 
+import "firebase/compat/firestore";
 interface ComparisionTicket {
   id: string;
-  stt: string;
   codeTicket: string;
-  dou: string;
+  dou: firebase.firestore.Timestamp;
   name: string;
   gate: string;
   isComparision: boolean;

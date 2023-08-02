@@ -7,4 +7,6 @@ import home from "../images/u_home-alt.svg";
 import invoice from "../images/u_invoice.svg";
 import setting from "../images/u_setting.svg";
 import ticket from "../images/u_ticket.svg";
-export { logo, bell, mail, loupe, test, invoice, home, ticket, setting };
+import edit from "../images/fi_edit.svg";
+import elips from "../images/u_ellipsis-v.svg"
+export { logo, bell, mail, loupe, test, edit, invoice, home, ticket, setting,elips };
