@@ -124,6 +124,35 @@ const PackageService = () => {
 
   const handleOpenModal = (recordId: string | null = null) => {
     setSelectedRecordId(recordId);
+
+    if (recordId) {
+      const record = findRecordById(recordId);
+      if (record) {
+        setInputValues({
+          codePackage: record.codePackage,
+          name: record.name,
+          dou: "",
+          trd: "",
+          price: record.price,
+          priceCombo: record.priceCombo,
+          numberTicket: record.numberTicket,
+          status: record.status,
+        });
+      }
+    } else {
+      // If no recordId provided, reset the input values to the initial state
+      setInputValues({
+        codePackage: random,
+        name: "",
+        dou: grantTime,
+        trd: expiry,
+        price: "",
+        priceCombo: "",
+        numberTicket: 0,
+        status: "",
+      });
+    }
+
     setIsOpenModal(true);
   };
 
@@ -170,6 +199,10 @@ const PackageService = () => {
     } catch (error) {
       message.error(`Lỗi khi thêm thiết bị: ${error}`);
     }
+  };
+
+  const findRecordById = (id: string) => {
+    return dataPackageTicket.find((record) => record.id === id);
   };
 
   const handleUpdateData: MouseEventHandler<HTMLButtonElement> = async (
@@ -222,6 +255,7 @@ const PackageService = () => {
             dataSource={dataPackageTicket}
             className="table-striped-rows"
             rowKey={(record: PackageTicket) => record.codePackage}
+            pagination={{ pageSize: 3 }}
           ></Table>
         </div>
       </div>

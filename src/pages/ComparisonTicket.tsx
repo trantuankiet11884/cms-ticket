@@ -17,6 +17,7 @@ import moment from "moment";
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
 import { Dayjs } from "dayjs";
+import { firestore } from "../firebase/config";
 
 interface ComparisionTicket {
   id: string;
@@ -124,6 +125,35 @@ const ComparisonTicket = () => {
     setFilteredData(filteredData);
   };
 
+  const handleComparision = async () => {
+    try {
+      const idsToUpdate = filteredData
+        .filter((item) => !item.isComparision)
+        .map((item) => item.id);
+
+      if (idsToUpdate.length > 0) {
+        const batch = firestore.batch();
+        const cpticketRef = firestore.collection("comparisionTicket");
+
+        idsToUpdate.forEach((id) => {
+          const docRef = cpticketRef.doc(id);
+          batch.update(docRef, { isComparision: true });
+        });
+
+        await batch.commit();
+
+        const updatedData = filteredData.map((item) =>
+          idsToUpdate.includes(item.id)
+            ? { ...item, isComparision: true }
+            : item
+        );
+        setFilteredData(updatedData);
+      }
+    } catch (error) {
+      console.error("Error updating comparision status:", error);
+    }
+  };
+
   return (
     <div className="h-full">
       <Row className="h-full">
@@ -139,7 +169,7 @@ const ComparisonTicket = () => {
                   />
                 </div>
                 <div>
-                  <button className="comparison">
+                  <button className="comparison" onClick={handleComparision}>
                     <span className="btn-compar">Chốt đối soát</span>
                   </button>
                 </div>

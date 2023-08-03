@@ -24,6 +24,7 @@ import "firebase/compat/firestore";
 import { Dayjs } from "dayjs";
 import { fetchEventTickets } from "../redux/manageTicket/manageEventTicket";
 import { elips } from "../assets/js";
+import { exportToExcel } from "../utils/export";
 
 interface DataType {
   id: string;
@@ -369,6 +370,13 @@ const ManageTicket = () => {
     setFilteredDataEvent(filteredDataEvents);
   };
 
+  const handleExport = () => {
+    const exportt =
+      changeTable === true
+        ? exportToExcel(filteredData, "family")
+        : exportToExcel(filteredDataEvent, "event");
+  };
+
   return (
     <div className="p-4 pt-0 h-full">
       <div className="bg-white h-full p-2 rounded-lg">
@@ -401,7 +409,9 @@ const ManageTicket = () => {
               <Button danger onClick={handleOpenModal}>
                 Lọc vé
               </Button>
-              <Button danger>Xuất file {`(.csv)`}</Button>
+              <Button danger onClick={handleExport}>
+                Xuất file {`(.csv)`}
+              </Button>
             </Space>
           </div>
         </div>

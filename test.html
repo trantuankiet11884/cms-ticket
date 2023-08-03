@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      function binarySearch(k, arr1, arr2) {
+        let remainder = k;
+        let index1 = 0,
+          index2 = 0;
+        let number = 0;
+        while (remainder) {
+          if (index1 >= arr1.length) {
+            return arr2[index2 + remainder - 1];
+          }
+          if (index2 >= arr2.length) {
+            return arr1[index1 + remainder - 1];
+          }
+          let excludeCount = Math.floor(remainder / 2)
+            ? Math.floor(remainder / 2)
+            : 1;
+
+          if (index1 + excludeCount > arr1.length) {
+            excludeCount = arr1.length - index1;
+          }
+          if (index2 + excludeCount > arr2.length) {
+            excludeCount = arr2.length - index2;
+          }
+
+          remainder -= excludeCount;
+
+          let item1 = arr1[index1 + excludeCount - 1];
+          let item2 = arr2[index2 + excludeCount - 1];
+
+          if (item1 > item2) {
+            number = item2;
+            index2 += excludeCount;
+          } else {
+            number = item1;
+            index1 += excludeCount;
+          }
+        }
+        return number;
+      }
+
+      const log = binarySearch(
+        3,
+        [1, 2, 5, 7, 3, 4],
+        [11, 66, 22, 3, 11, 66, 88]
+      );
+
+      console.log(log);
+    </script>
+  </body>
+</html>
