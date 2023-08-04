@@ -21,7 +21,7 @@ import {
   updatePackageTicket,
 } from "../redux/packageTicket";
 import { edit } from "../assets/js";
-import moment from "moment";
+import dayjs, { Dayjs } from "dayjs";
 
 interface PackageTicket {
   id?: string;
@@ -102,16 +102,14 @@ const PackageService = () => {
     (state: RootState) => state.packageTicket.packageTicket
   );
 
-  const grantTime = moment().format("DD/MM/YYYY HH:mm");
-  const expiry = moment().add(1, "day").format("DD/MM/YYYY HH:mm");
   const random = Math.random().toString(36).slice(2);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [selectedRecordId, setSelectedRecordId] = useState<string | null>(null);
   const [inputValues, setInputValues] = useState({
     codePackage: random,
     name: "",
-    dou: grantTime,
-    trd: expiry,
+    dou: "",
+    trd: "",
     price: "",
     priceCombo: "",
     numberTicket: 0,
@@ -131,8 +129,8 @@ const PackageService = () => {
         setInputValues({
           codePackage: record.codePackage,
           name: record.name,
-          dou: "",
-          trd: "",
+          dou: record.dou,
+          trd: record.trd,
           price: record.price,
           priceCombo: record.priceCombo,
           numberTicket: record.numberTicket,
@@ -144,8 +142,8 @@ const PackageService = () => {
       setInputValues({
         codePackage: random,
         name: "",
-        dou: grantTime,
-        trd: expiry,
+        dou: "",
+        trd: "",
         price: "",
         priceCombo: "",
         numberTicket: 0,
@@ -165,6 +163,21 @@ const PackageService = () => {
     setInputValues((prevValues) => ({
       ...prevValues,
       [name]: value,
+    }));
+  };
+
+  const handleDateChange = (
+    name: string,
+    date: Dayjs | null,
+    dateString: string
+  ) => {
+    if (!date) {
+      date = dayjs(dateString, "DD/MM/YY HH:mm");
+    }
+
+    setInputValues((prevValues) => ({
+      ...prevValues,
+      [name]: dateString,
     }));
   };
 
@@ -288,11 +301,23 @@ const PackageService = () => {
           </div>
           <div className="flex items-center justify-between">
             <Form.Item label="Ngày áp dụng" className="mb-2">
-              <DatePicker name="dou" format={"DD/MM/YY HH:mm:ss"}></DatePicker>
+              <DatePicker
+                name="dou"
+                format={"DD/MM/YY HH:mm"}
+                onChange={(date, dateString) =>
+                  handleDateChange("dou", date, dateString)
+                }
+              />
             </Form.Item>
 
             <Form.Item label="Ngày hết hạn" className="mb-2">
-              <DatePicker name="trd" format={"DD/MM/YY HH:mm:ss"}></DatePicker>
+              <DatePicker
+                name="trd"
+                format={"DD/MM/YY HH:mm"}
+                onChange={(date, dateString) =>
+                  handleDateChange("trd", date, dateString)
+                }
+              />
             </Form.Item>
           </div>
           <div>

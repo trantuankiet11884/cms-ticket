@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { fetchComparisionTicket } from "../redux/comparisonTicket";
@@ -18,6 +18,7 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
 import { Dayjs } from "dayjs";
 import { firestore } from "../firebase/config";
+import { exporCptToExcel } from "../utils/export";
 
 interface ComparisionTicket {
   id: string;
@@ -75,6 +76,7 @@ const columns: ColumnsType<ComparisionTicket> = [
 const ComparisonTicket = () => {
   const [searchValue, setSearchValue] = useState("");
   const [isComparision, setIsComparision] = useState<string>("");
+  const [allComparisionTrue, setAllComparisionTrue] = useState(false);
   const [filteredData, setFilteredData] = useState<ComparisionTicket[]>([]);
   const [fromDate, setFromDate] = useState<Dayjs | null>(null);
   const [toDate, setToDate] = useState<Dayjs | null>(null);
@@ -121,7 +123,8 @@ const ComparisonTicket = () => {
         (item) => item.isComparision === (isComparision === "true")
       );
     }
-
+    const allTrue = filteredData.every((item) => item.isComparision);
+    setAllComparisionTrue(allTrue);
     setFilteredData(filteredData);
   };
 
@@ -169,9 +172,22 @@ const ComparisonTicket = () => {
                   />
                 </div>
                 <div>
-                  <button className="comparison" onClick={handleComparision}>
-                    <span className="btn-compar">Chốt đối soát</span>
-                  </button>
+                  {allComparisionTrue ? (
+                    <button className="comparison">
+                      <span
+                        className="btn-compar"
+                        onClick={() =>
+                          exporCptToExcel(filteredData, "comparision")
+                        }
+                      >
+                        Xuất file {`(.csv)`}
+                      </span>
+                    </button>
+                  ) : (
+                    <button className="comparison" onClick={handleComparision}>
+                      <span className="btn-compar">Chốt đối soát</span>
+                    </button>
+                  )}
                 </div>
               </div>
               <div className="pt-4">

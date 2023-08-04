@@ -2,10 +2,13 @@ import {
   Badge,
   Button,
   Checkbox,
+  Col,
   DatePicker,
+  Form,
   Modal,
   Radio,
   RadioChangeEvent,
+  Row,
   Space,
   Table,
   Tag,
@@ -25,6 +28,7 @@ import { Dayjs } from "dayjs";
 import { fetchEventTickets } from "../redux/manageTicket/manageEventTicket";
 import { elips } from "../assets/js";
 import { exportToExcel } from "../utils/export";
+import { firestore } from "../firebase/config";
 
 interface DataType {
   id: string;
@@ -50,18 +54,15 @@ interface ManageEventTicket {
 }
 
 const ManageTicket = () => {
-  const dispatch: any = useDispatch();
-  const dataTicket = useSelector((state: RootState) => state.ticket.tickets);
-  const dataTicketEvent = useSelector(
-    (state: RootState) => state.ticketEvent.ticketEvents
-  );
-
-  useEffect(() => {
-    dispatch(fetchTickets());
-    dispatch(fetchEventTickets());
-  }, [dispatch]);
-
   const [isOpenModal, setIsOpenModal] = useState(false);
+  const [isOpenModal2, setIsOpenModal2] = useState(false);
+  const [isOpenModal3, setIsOpenModal3] = useState(false);
+  const [selectedTicket, setSelectedTicket] = useState<DataType | null>(null);
+  const [selectedEventTicket, setSelectedEventTicket] =
+    useState<DataType | null>(null);
+  const [updatedUsageDate, setUpdatedUsageDate] = useState<Dayjs | null>(null);
+  const [updatedUsageEventDate, setUpdatedUsageEventDate] =
+    useState<Dayjs | null>(null);
   const [disabledGateCheckboxes, setDisabledGateCheckboxes] = useState(false);
   const [value, setValue] = useState<string>("");
   const [selectedStatus, setSelectedStatus] = useState<string>("");
@@ -74,6 +75,16 @@ const ManageTicket = () => {
   const [toDate, setToDate] = useState<Dayjs | null>(null);
   const [changeTable, setChangeTable] = useState(false);
 
+  const dispatch: any = useDispatch();
+  const dataTicket = useSelector((state: RootState) => state.ticket.tickets);
+  const dataTicketEvent = useSelector(
+    (state: RootState) => state.ticketEvent.ticketEvents
+  );
+
+  useEffect(() => {
+    dispatch(fetchTickets());
+    dispatch(fetchEventTickets());
+  }, [dispatch]);
   useEffect(() => {
     setFilteredData(dataTicket);
     setFilteredDataEvent(dataTicketEvent);
@@ -167,8 +178,18 @@ const ManageTicket = () => {
             title={
               <>
                 <div className="flex flex-col justify-start items-start">
-                  <button className="dotdot">Sử dụng vé</button>
-                  <button className="dotdot">Đổi ngày sử dụng</button>
+                  <button
+                    className="dotdot"
+                    onClick={() => handleTicketUsage(record.id)}
+                  >
+                    Sử dụng vé
+                  </button>
+                  <button
+                    className="dotdot"
+                    onClick={() => handleOpenModal2(record.id)}
+                  >
+                    Đổi ngày sử dụng
+                  </button>
                 </div>
               </>
             }
@@ -268,12 +289,23 @@ const ManageTicket = () => {
         return (
           <Tooltip
             color="#FFD2A8"
+            trigger="click"
             placement="left"
             title={
               <>
                 <div className="flex flex-col justify-start items-start">
-                  <button className="dotdot">Sử dụng vé</button>
-                  <button className="dotdot">Đổi ngày sử dụng</button>
+                  <button
+                    className="dotdot"
+                    onClick={() => handleEventTicketUsage(record.id)}
+                  >
+                    Sử dụng vé
+                  </button>
+                  <button
+                    className="dotdot"
+                    onClick={() => handleOpenModal3(record.id)}
+                  >
+                    Đổi ngày sử dụng
+                  </button>
                 </div>
               </>
             }
@@ -291,6 +323,30 @@ const ManageTicket = () => {
 
   const closeModal = () => {
     setIsOpenModal(false);
+  };
+
+  const handleOpenModal2 = (ticketId: string) => {
+    setSelectedTicket(
+      filteredData.find((item) => item.id === ticketId) || null
+    );
+    setIsOpenModal2(true);
+    setUpdatedUsageDate(null);
+  };
+
+  const handleOpenModal3 = (ticketId: string) => {
+    setSelectedEventTicket(
+      filteredDataEvent.find((item) => item.id === ticketId) || null
+    );
+    setIsOpenModal3(true);
+    setUpdatedUsageEventDate(null);
+  };
+
+  const closeModal2 = () => {
+    setIsOpenModal2(false);
+  };
+
+  const closeModal3 = () => {
+    setIsOpenModal3(false);
   };
 
   const onChangeFromDate = (date: Dayjs | null) => {
@@ -370,6 +426,14 @@ const ManageTicket = () => {
     setFilteredDataEvent(filteredDataEvents);
   };
 
+  const handleTicketUsage = (ticketId: any) => {
+    markTicketAsUsed(ticketId);
+  };
+
+  const handleEventTicketUsage = (ticketId: any) => {
+    markEventTicketAsUsed(ticketId);
+  };
+
   const handleExport = () => {
     const exportt =
       changeTable === true
@@ -377,11 +441,56 @@ const ManageTicket = () => {
         : exportToExcel(filteredDataEvent, "event");
   };
 
+  const markTicketAsUsed = async (ticketId: any) => {
+    try {
+      const ticketRef = firestore.collection("manageTicket").doc(ticketId);
+      const ticketSnapshot = await ticketRef.get();
+      const ticketData = ticketSnapshot.data();
+
+      if (updatedUsageDate) {
+        await ticketRef.update({
+          status: "Đã sử dụng",
+          dou: firebase.firestore.Timestamp.fromMillis(
+            updatedUsageDate.valueOf()
+          ),
+        });
+      } else {
+        await ticketRef.update({
+          status: "Đã sử dụng",
+        });
+      }
+    } catch (error) {
+      console.error("Error updating ticket status:", error);
+    }
+  };
+
+  const markEventTicketAsUsed = async (ticketId: any) => {
+    try {
+      const ticketRef = firestore.collection("manageEventTicket").doc(ticketId);
+      const ticketSnapshot = await ticketRef.get();
+      const ticketData = ticketSnapshot.data();
+
+      if (updatedUsageEventDate) {
+        await ticketRef.update({
+          status: "Đã sử dụng",
+          dou: firebase.firestore.Timestamp.fromMillis(
+            updatedUsageEventDate.valueOf()
+          ),
+        });
+      } else {
+        await ticketRef.update({
+          status: "Đã sử dụng",
+        });
+      }
+    } catch (error) {
+      console.error("Error updating ticket status:", error);
+    }
+  };
+
   return (
     <div className="p-4 pt-0 h-full">
       <div className="bg-white h-full p-2 rounded-lg">
         <p className="title">Danh sách vé</p>
-
         <div className="change-table">
           <Space>
             <Button
@@ -435,6 +544,106 @@ const ManageTicket = () => {
           )}
         </div>
       </div>
+
+      <Modal
+        open={isOpenModal3}
+        footer={false}
+        closeIcon={false}
+        onCancel={closeModal3}
+      >
+        {selectedEventTicket && (
+          <>
+            <p className="text-center">Đổi ngày sử dụng vé</p>
+            <Row className="pt-5">
+              <Col span={8}>
+                <p>Số vé:</p>
+                <p>Tên vé:</p>
+                <p>Tên sự kiện:</p>
+                <p>Hạn sử dụng:</p>
+              </Col>
+              <Col span={16}>
+                <p>{selectedEventTicket.bookingCode}</p>
+                <p>{selectedEventTicket.numberTicket}</p>
+                <p>{selectedEventTicket.nameEvent || "-"}</p>
+                <p>
+                  <DatePicker
+                    value={updatedUsageEventDate}
+                    onChange={(date: Dayjs | null) =>
+                      setUpdatedUsageEventDate(date)
+                    }
+                    format={"DD/MM/YYYY"}
+                  />
+                </p>
+              </Col>
+            </Row>
+            <div className="text-center pt-5">
+              <Space>
+                <Button danger onClick={() => setIsOpenModal3(false)}>
+                  Hủy
+                </Button>
+                <Button
+                  className="bg-[#ff993c] text-[white]"
+                  onClick={() => {
+                    markEventTicketAsUsed(selectedEventTicket?.id);
+                    setIsOpenModal3(false);
+                  }}
+                >
+                  Lưu
+                </Button>
+              </Space>
+            </div>
+          </>
+        )}
+      </Modal>
+
+      <Modal
+        open={isOpenModal2}
+        footer={false}
+        closeIcon={false}
+        onCancel={closeModal2}
+      >
+        {selectedTicket && (
+          <>
+            <p className="text-center">Đổi ngày sử dụng vé</p>
+            <Row className="pt-5">
+              <Col span={8}>
+                <p>Số vé:</p>
+                <p>Tên vé:</p>
+                <p>Tên sự kiện:</p>
+                <p>Hạn sử dụng:</p>
+              </Col>
+              <Col span={16}>
+                <p>{selectedTicket.bookingCode}</p>
+                <p>{selectedTicket.numberTicket}</p>
+                <p>{selectedTicket.nameEvent || "-"}</p>
+                <p>
+                  <DatePicker
+                    value={updatedUsageDate}
+                    onChange={(date: Dayjs | null) => setUpdatedUsageDate(date)}
+                    format={"DD/MM/YYYY"}
+                  />
+                </p>
+              </Col>
+            </Row>
+            <div className="text-center pt-5">
+              <Space>
+                <Button danger onClick={() => setIsOpenModal2(false)}>
+                  Hủy
+                </Button>
+                <Button
+                  className="bg-[#ff993c] text-[white]"
+                  onClick={() => {
+                    markTicketAsUsed(selectedTicket?.id);
+                    setIsOpenModal2(false);
+                  }}
+                >
+                  Lưu
+                </Button>
+              </Space>
+            </div>
+          </>
+        )}
+      </Modal>
 
       <Modal
         open={isOpenModal}

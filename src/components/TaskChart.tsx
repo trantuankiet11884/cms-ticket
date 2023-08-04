@@ -1,3 +1,4 @@
+import { DatePicker } from "antd";
 import ReactApexChart from "react-apexcharts";
 
 const TasksChart: React.FC = () => {
@@ -27,6 +28,9 @@ const TasksChart: React.FC = () => {
   };
   return (
     <>
+      <div className="flex justify-end mb-2">
+        <DatePicker></DatePicker>
+      </div>
       <ReactApexChart
         type="area"
         options={options}
