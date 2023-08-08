@@ -13,6 +13,7 @@ interface ManageTicket {
   trd: firebase.firestore.Timestamp;
   gate: string;
   nameEvent?: string;
+  price?: number;
 }
 
 interface FirestoreState {

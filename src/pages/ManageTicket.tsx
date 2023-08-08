@@ -39,6 +39,7 @@ interface DataType {
   trd: firebase.firestore.Timestamp;
   gate: string;
   nameEvent?: string;
+  price?: number;
 }
 
 interface ManageEventTicket {
@@ -74,6 +75,7 @@ const ManageTicket = () => {
   const [fromDate, setFromDate] = useState<Dayjs | null>(null);
   const [toDate, setToDate] = useState<Dayjs | null>(null);
   const [changeTable, setChangeTable] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
 
   const dispatch: any = useDispatch();
   const dataTicket = useSelector((state: RootState) => state.ticket.tickets);
@@ -95,6 +97,7 @@ const ManageTicket = () => {
       title: "STT",
       dataIndex: "stt",
       key: "stt",
+      render: (text: any, record: DataType, index: number) => index + 1,
     },
     {
       title: "Booking code",
@@ -206,6 +209,8 @@ const ManageTicket = () => {
       title: "STT",
       dataIndex: "stt",
       key: "stt",
+      render: (text: any, record: ManageEventTicket, index: number) =>
+        index + 1,
     },
     {
       title: "Booking code",
@@ -487,6 +492,17 @@ const ManageTicket = () => {
     }
   };
 
+  const handleSearch = (keyword: string) => {
+    const filteredByKeyword = dataTicket.filter(
+      (item) =>
+        item.bookingCode.includes(keyword) ||
+        item.numberTicket.includes(keyword) ||
+        item.gate.includes(keyword)
+    );
+
+    setFilteredData(filteredByKeyword);
+  };
+
   return (
     <div className="p-4 pt-0 h-full">
       <div className="bg-white h-full p-2 rounded-lg">
@@ -511,7 +527,13 @@ const ManageTicket = () => {
         </div>
         <div className="flex justify-between pt-4">
           <div>
-            <Search placeholder="Search"></Search>
+            <Search
+              placeholder="Search"
+              onChange={(e) => {
+                setSearchValue(e.target.value);
+                handleSearch(e.target.value);
+              }}
+            ></Search>
           </div>
           <div>
             <Space>

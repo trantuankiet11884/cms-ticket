@@ -22,6 +22,7 @@ import {
 } from "../redux/packageTicket";
 import { edit } from "../assets/js";
 import dayjs, { Dayjs } from "dayjs";
+import { exporPkToExcel } from "../utils/export";
 
 interface PackageTicket {
   id?: string;
@@ -41,6 +42,7 @@ const PackageService = () => {
       title: "STT",
       dataIndex: "stt",
       key: "stt",
+      render: (text: any, record: PackageTicket, index: number) => index + 1,
     },
     {
       title: "Mã gói",
@@ -105,6 +107,9 @@ const PackageService = () => {
   const random = Math.random().toString(36).slice(2);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [selectedRecordId, setSelectedRecordId] = useState<string | null>(null);
+  const [searchValue, setSearchValue] = useState("");
+  const [filteredData, setFilteredData] = useState<PackageTicket[]>([]);
+
   const [inputValues, setInputValues] = useState({
     codePackage: random,
     name: "",
@@ -119,6 +124,10 @@ const PackageService = () => {
   useEffect(() => {
     dispatch(fetchPackageTicket());
   }, [dispatch]);
+
+  useEffect(() => {
+    setFilteredData(dataPackageTicket);
+  }, [dataPackageTicket]);
 
   const handleOpenModal = (recordId: string | null = null) => {
     setSelectedRecordId(recordId);
@@ -244,17 +253,37 @@ const PackageService = () => {
     }
   };
 
+  const handleSearch = (keyword: string) => {
+    const filteredByKeyword = dataPackageTicket.filter(
+      (item) =>
+        item.codePackage.includes(keyword) || item.name.includes(keyword)
+    );
+
+    setFilteredData(filteredByKeyword);
+  };
+
   return (
     <div className="p-4 pt-0 h-full">
       <div className="bg-white h-full p-2 rounded-lg">
         <p className="title">Danh sách gói vé</p>
         <div className="flex justify-between pt-4">
           <div>
-            <Search placeholder="Search"></Search>
+            <Search
+              placeholder="Search"
+              onChange={(e) => {
+                setSearchValue(e.target.value);
+                handleSearch(e.target.value);
+              }}
+            ></Search>
           </div>
           <div>
             <Space>
-              <Button danger>Xuất file {`(.csv)`}</Button>
+              <Button
+                danger
+                onClick={() => exporPkToExcel(dataPackageTicket, "Goi ve")}
+              >
+                Xuất file {`(.csv)`}
+              </Button>
               <Button danger onClick={() => handleOpenModal()}>
                 Thêm gói vé
               </Button>
@@ -265,7 +294,7 @@ const PackageService = () => {
           <Table
             size="small"
             columns={columns}
-            dataSource={dataPackageTicket}
+            dataSource={filteredData}
             className="table-striped-rows"
             rowKey={(record: PackageTicket) => record.codePackage}
             pagination={{ pageSize: 3 }}
@@ -303,7 +332,7 @@ const PackageService = () => {
             <Form.Item label="Ngày áp dụng" className="mb-2">
               <DatePicker
                 name="dou"
-                format={"DD/MM/YY HH:mm"}
+                format={"DD/MM/YYYY HH:mm"}
                 onChange={(date, dateString) =>
                   handleDateChange("dou", date, dateString)
                 }
@@ -313,7 +342,7 @@ const PackageService = () => {
             <Form.Item label="Ngày hết hạn" className="mb-2">
               <DatePicker
                 name="trd"
-                format={"DD/MM/YY HH:mm"}
+                format={"DD/MM/YYYY HH:mm"}
                 onChange={(date, dateString) =>
                   handleDateChange("trd", date, dateString)
                 }

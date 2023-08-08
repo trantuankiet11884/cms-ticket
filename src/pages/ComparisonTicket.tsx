@@ -34,6 +34,7 @@ const columns: ColumnsType<ComparisionTicket> = [
     title: "STT",
     dataIndex: "stt",
     key: "stt",
+    render: (text: any, record: ComparisionTicket, index: number) => index + 1,
   },
   {
     title: "Số vé",
@@ -128,6 +129,17 @@ const ComparisonTicket = () => {
     setFilteredData(filteredData);
   };
 
+  const handleSearch = (keyword: string) => {
+    const filteredByKeyword = dataCpTicket.filter(
+      (item) =>
+        item.codeTicket.includes(keyword) ||
+        item.name.includes(keyword) ||
+        item.gate.includes(keyword)
+    );
+
+    setFilteredData(filteredByKeyword);
+  };
+
   const handleComparision = async () => {
     try {
       const idsToUpdate = filteredData
@@ -168,7 +180,10 @@ const ComparisonTicket = () => {
                 <div>
                   <Search
                     placeholder="Search"
-                    onChange={(e) => setSearchValue(e.target.value)}
+                    onChange={(e) => {
+                      setSearchValue(e.target.value);
+                      handleSearch(e.target.value);
+                    }}
                   />
                 </div>
                 <div>

@@ -337,3 +337,14 @@ body {
 /* .ant-table-cell {
   white-space: nowrap;
 } */
+
+.econ {
+  color: var(--text, #1e0d03);
+
+  /* 24 bold */
+  font-family: Montserrat;
+  font-size: 1.5rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.875rem; /* 125% */
+}
