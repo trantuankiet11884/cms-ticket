@@ -75,9 +75,6 @@ const Sidebar: React.FC = () => {
           items={items}
           onClick={handleMenuClick}
         />
-        <div className="copyright text-center">
-          <p>Copyright © 2020 Alta Software </p>
-        </div>
       </Sider>
     </>
   );
