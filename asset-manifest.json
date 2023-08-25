@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/cms-ticket/static/css/main.8e346c4b.css",
+    "main.js": "/cms-ticket/static/js/main.13b42542.js",
+    "static/media/u_setting.svg": "/cms-ticket/static/media/u_setting.7d96aa61cef611771308e36575903e36.svg",
+    "static/media/u_invoice.svg": "/cms-ticket/static/media/u_invoice.1b29c1be2c628353c5893030e838ae0a.svg",
+    "static/media/u_ticket.svg": "/cms-ticket/static/media/u_ticket.b185d6cb3d93eff5aee39f5d1b4e52ae.svg",
+    "static/media/u_home-alt.svg": "/cms-ticket/static/media/u_home-alt.355fe219f8063437289fad81ae51cd6a.svg",
+    "static/media/u_ellipsis-v.svg": "/cms-ticket/static/media/u_ellipsis-v.979d17cf3a8a4ba5258fb990c55063ae.svg",
+    "static/media/loupe 1.svg": "/cms-ticket/static/media/loupe 1.9abf9ad58760ee533f756f0bea204d1f.svg",
+    "static/media/fi_edit.svg": "/cms-ticket/static/media/fi_edit.ad465df4a92b6b7693f090e4fce6531a.svg",
+    "index.html": "/cms-ticket/index.html",
+    "static/media/fi_bell.svg": "/cms-ticket/static/media/fi_bell.2de407a3bf84c4cc29606bfdea5d7791.svg",
+    "static/media/fi_mail.svg": "/cms-ticket/static/media/fi_mail.759a11c049cf7aaf6010b194c10394ef.svg",
+    "main.8e346c4b.css.map": "/cms-ticket/static/css/main.8e346c4b.css.map",
+    "main.13b42542.js.map": "/cms-ticket/static/js/main.13b42542.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.8e346c4b.css",
+    "static/js/main.13b42542.js"
+  ]
+}
